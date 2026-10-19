@@ -1,0 +1,51 @@
+// Dag 7, del 2: Skriv egna async-funktioner. Gör testerna gröna på tests.html.
+// Alla funktioner ska vara async och använda await. Använd INTE .then().
+import { hamtaMenyFranServer, hamtaRattFranServer } from "./fordrojning.js";
+
+// 1. Hämta hela menyn (använd hamtaMenyFranServer med 10 ms). Returnerar menyn.
+export async function hamtaMeny() {
+  // TODO
+}
+
+// 2. Hämta namnet på en rätt (hamtaRattFranServer(id, 10)). Okänt id: låt felet följa med (fånga det inte).
+export async function hamtaRattNamn(id) {
+  // TODO
+}
+
+// 3. Som 2, men om något går fel returnerar funktionen null istället för att kasta fel (try/catch).
+export async function hamtaRattEllerNull(id) {
+  // TODO
+}
+
+// 4. Hämta två rätter EFTER varandra (await, sedan await). Returnerar [ratt1, ratt2]. ms är väntetiden per anrop.
+export async function hamtaTvaRatterEfterVarandra(id1, id2, ms = 100) {
+  // TODO
+}
+
+// 5. Samma sak, men båda ANROPEN startas samtidigt (Promise.all). Ska gå dubbelt så snabbt.
+export async function hamtaTvaRatterParallellt(id1, id2, ms = 100) {
+  // TODO
+}
+
+// 6. Försök upp till maxForsok gånger. anropFn är en funktion som returnerar en promise.
+//    Lyckas något försök: returnera resultatet. Misslyckas alla: kasta det SISTA felet.
+//    Tips: en for-loop med try/catch inuti, och spara det senaste felet i en variabel.
+export async function hamtaMedForsok(anropFn, maxForsok) {
+  // TODO
+}
+
+// 7. Ge en promise en tidsgräns. Är den inte klar inom ms millisekunder: avvisa med
+//    new Error("Tidsgränsen överskreds"). Tips: Promise.race med en promise som avvisas efter ms.
+export function medTimeout(promise, ms) {
+  // TODO
+}
+
+// 8. Tillståndsmaskinen för att ladda något: laddar -> klar / tomt / fel.
+//    hamtaFn returnerar en promise med en lista. vidTillstand anropas med ett objekt:
+//      { typ: "laddar" }                       först av allt
+//      { typ: "klar", ratter: [...] }          om listan har innehåll
+//      { typ: "tomt" }                         om listan är tom
+//      { typ: "fel", meddelande: "..." }       om hamtaFn misslyckas (felets message)
+export async function laddaMeny(hamtaFn, vidTillstand) {
+  // TODO
+}
