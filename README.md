@@ -16,8 +16,7 @@ Igår läste du asynkron kod. Idag skriver du den. `async` och `await` är bara 
 2. **Klona din fork:** *Code → HTTPS → kopiera adressen*. I terminalen (Ctrl+ö i VS Code): `git clone <adressen>`. Öppna den nya mappen i VS Code och starta *Live Server*.
 3. **Gör uppgiften.** Spara och kontrollera i webbläsaren och Console (F12) efter varje steg. Gör en commit efter varje avslutat steg: `git add .` och `git commit -m "Beskriv vad du gjorde"`.
 4. **Skicka upp** när du är klar: `git push`.
-5. **Fortsätt i `mitt-projekt`** med dagens projektsteg (längre ned).
-6. **Lämna in i Microsoft Forms.**
+5. **Lämna in i Microsoft Forms.**
 
 Fastnar du: skriv ner exakt var och vad du försökt (och vilket felmeddelande du fick), och ta det först i nästa handledda pass.
 
@@ -47,7 +46,7 @@ Skriv `hamtaMedForsok` (en loop med `try/catch` som försöker upp till `maxFors
 
 ### Steg 6. Tillståndsmaskinen laddaMeny
 
-Skriv `laddaMeny(hamtaFn, vidTillstand)`. Först `laddar`, sedan antingen `klar`, `tomt` eller `fel`. Alla fyra tillstånd har varsitt test. Det här mönstret använder du i ditt projekt och imorgon med riktig data.
+Skriv `laddaMeny(hamtaFn, vidTillstand)`. Först `laddar`, sedan antingen `klar`, `tomt` eller `fel`. Alla fyra tillstånd har varsitt test. Det här mönstret använder du imorgon med riktig data.
 
 ### Steg 7. Se det på sidan
 
@@ -57,37 +56,6 @@ Skriv `laddaMeny(hamtaFn, vidTillstand)`. Först `laddar`, sedan antingen `klar`
 
 Skriv `hamtaAllaForsiktigt(idLista)` som hämtar många rätter parallellt med `Promise.allSettled` och returnerar `{ lyckade, misslyckade }`. Skriv egna tester i en ny fil `extra-tests.js`.
 
-## AI-spåret (nivå 2: Specificera och jämför)
-
-**Skriv om, och hitta det AI glömde** (cirka 25 minuter, efter att du gjort din egen lösning)
-
-Du beskriver exakt vad koden ska göra och skriver testerna. AI föreslår kod, du kör testerna, jämför och förstår. AI skriver async-kod som ser rätt ut men saknar felhantering eller ett await. Det syns bara om du testar fel.
-
-Regler: egen lösning först, du ska kunna förklara varje rad, och du loggar i `docs/ai-logg.md` i `mitt-projekt` under rubriken *Modul 5*. Reglerna står i `AI-REGLER-MODUL5.md`.
-
-1. Skriv en promise-kedja med .then() själv.
-2. Be AI skriva om den med async/await och try/catch.
-3. Gör så att anropet misslyckas med flit (fel url, avstängt nät, kasta ett fel).
-4. Kontrollera att felet fångas och att användaren får ett begripligt meddelande.
-5. Logga vad AI glömde, om något.
-
-Prompt att utgå från:
-
-```
-Skriv om den här koden med async/await.
-Lägg till felhantering med try/catch/finally.
-Ändra inget annat beteende.
-[klistra in din promise-kedja]
-```
-
-**Kontrollera med:**
-
-- Tvinga fram fel och se vad som händer.
-- Titta efter saknat await (du får en promise, inte ett värde).
-- Network-fliken i DevTools visar vad som skickades.
-
-**I ditt projekt:** Skriv js/api.js med en async funktion som hämtar din data. Testa att den klarar ett fel.
-
 ## Kontrollista: så vet du att du är klar
 
 - [ ] Alla tester på `tests.html` är gröna.
@@ -96,7 +64,6 @@ Lägg till felhantering med try/catch/finally.
 - [ ] Du kan förklara varför `Promise.all` är snabbare än två `await` i rad.
 - [ ] `index.html` visar alla fyra tillstånden.
 - [ ] Du har gjort minst fem commits med beskrivande meddelanden.
-- [ ] Du har gjort AI-uppgiften och skrivit en post i `docs/ai-logg.md` i `mitt-projekt`.
 
 ## Tips om du fastnar
 
@@ -107,19 +74,6 @@ Lägg till felhantering med try/catch/finally.
 - Testerna körs i modul-läge och kräver Live Server. Öppnar du filen direkt (`file://`) blockeras modulerna.
 - Fastnar du: skriv `console.log` före och efter varje `await` och se i vilken ordning det kommer.
 
-## Ditt projekt: Skriv din första async-funktion i ditt projekt
-
-Efter övningen jobbar du vidare i `mitt-projekt`, samma repo som i modul 4. Övningen här är träningsbanan, projektet är det som växer. Dagens steg står också i `PROJEKTSTEG-MODUL5.md` (som du kopierar till ditt projekt dag 1), under **Dag 7**.
-
-1. Skapa `js/api.js` i ditt projekt (samma repo som tidigare).
-2. Skriv en `async function` som hämtar data för ditt case från din egen JSON-fil eller en låtsasserver (riktiga anrop kommer imorgon). Använd `await`.
-3. Lägg in `try/catch` så att funktionen inte kraschar när något går fel, och skriv ett meddelande användaren kan förstå.
-4. Skriv en funktion i stil med `laddaMeny` för ditt case: den ska anropa en callback med `laddar`, `klar`, `tomt` eller `fel`.
-5. Skriv minst tre tester för tillstånden (klar, tomt, fel) i din testfil.
-6. Commit och push.
-
-**Klart när:** `js/api.js` har en async funktion med try/catch och en tillståndsfunktion, och minst tre tester är gröna.
-
 ## Inlämning
 
 **Deadline: imorgon klockan 09.00.** Allt lämnas in i Microsoft Forms. Du behöver inte redovisa något muntligt.
@@ -127,8 +81,7 @@ Efter övningen jobbar du vidare i `mitt-projekt`, samma repo som i modul 4. Öv
 I formuläret fyller du i:
 
 1. Länk till din fork av det här repot.
-2. Länk till ditt `mitt-projekt`.
-3. Reflektion: Vad är skillnaden mellan att fånga ett fel i funktionen (`hamtaRattEllerNull`) och att låta det följa med (`hamtaRattNamn`)? När är respektive sätt rätt?
+2. Reflektion: Vad är skillnaden mellan att fånga ett fel i funktionen (`hamtaRattEllerNull`) och att låta det följa med (`hamtaRattNamn`)? När är respektive sätt rätt?
 
 ## Vill du mer? (frivilligt)
 
