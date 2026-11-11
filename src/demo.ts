@@ -1,13 +1,15 @@
 // Visar dina tillstånd på sidan. Du behöver inte ändra den här filen.
-import { laddaMeny } from "./api.js";
-import { hamtaMenyFranServer, vanta } from "./fordrojning.js";
+import { laddaMeny } from "./api";
+import { hamtaMenyFranServer, vanta } from "./fordrojning";
+import { hamta } from "./dom";
+import type { Tillstand } from "./typer";
 
-const status = document.querySelector("#status");
-const knapp = document.querySelector("#ladda");
-const simuleraFel = document.querySelector("#simulera-fel");
-const simuleraTomt = document.querySelector("#simulera-tomt");
+const status = hamta("#status");
+const knapp = hamta<HTMLButtonElement>("#ladda");
+const simuleraFel = hamta<HTMLInputElement>("#simulera-fel");
+const simuleraTomt = hamta<HTMLInputElement>("#simulera-tomt");
 
-function visaTillstand(tillstand) {
+function visaTillstand(tillstand: Tillstand): void {
   status.className = tillstand.typ;
   knapp.disabled = tillstand.typ === "laddar";
   if (tillstand.typ === "laddar") {

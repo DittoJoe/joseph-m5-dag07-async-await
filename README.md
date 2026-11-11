@@ -1,6 +1,6 @@
 # Dag 7 · async och await
 
-*Modul 5, UI/UX & Frontendutveckling (JavaScript), Lexicon IT-Proffs*
+*Modul 5, UI/UX & Frontendutveckling (TypeScript), Lexicon IT-Proffs*
 
 ## Vad du ska göra idag
 
@@ -8,25 +8,45 @@ Du skriver **asynkron kod** som ser ut som vanlig kod med `async` och `await`. D
 
 ## Bakgrund
 
-Igår läste du asynkron kod. Idag skriver du den. `async` och `await` är bara ett trevligare sätt att skriva promises: koden läses uppifrån och ned, och fel hanteras med samma `try/catch` som du redan känner till. Du får en låtsasserver (`fordrojning.js`) som svarar efter en liten väntan, så att du kan öva utan riktiga nätanrop. Imorgon byter vi ut den mot riktiga anrop med `fetch`.
+Igår läste du asynkron kod. Idag skriver du den. `async` och `await` är bara ett trevligare sätt att skriva promises: koden läses uppifrån och ned, och fel hanteras med samma `try/catch` som du redan känner till. Du får en låtsasserver (`src/fordrojning.ts`) som svarar efter en liten väntan, så att du kan öva utan riktiga nätanrop. Imorgon byter vi ut den mot riktiga anrop med `fetch`.
+
+## TypeScript idag: Promise<T>, generics och tillstånd som unioner
+
+- **`Promise<number>`**: en async-funktion returnerar alltid en promise. Typen säger vad du får när den är klar: `async function hamtaRattPris(id: number): Promise<number>`.
+- **Generics (`<T>`)**: `hamtaMedForsok<T>(anropFn: () => Promise<T>, maxForsok: number): Promise<T>` fungerar för vilken typ som helst. `T` blir det som anropet ger tillbaka. Du behöver inte skriva `T` själv när du anropar den.
+- **`catch (fel)`** ger `unknown` i TypeScript, inte `any`. Kontrollera innan du använder det: `fel instanceof Error ? fel.message : String(fel)`.
+- **Tillstånd som union** (`Tillstand` i `src/typer.ts`):
+
+```ts
+type Tillstand =
+  | { typ: "laddar" }
+  | { typ: "tomt" }
+  | { typ: "klar"; ratter: Ratt[] }
+  | { typ: "fel"; meddelande: string };
+```
+
+När du har kollat `if (t.typ === "klar")` vet TypeScript att `t.ratter` finns. I `"laddar"` finns inte `ratter`, och försöker du läsa den får du ett fel direkt. I JavaScript får du `undefined` först när sidan körs.
 
 ## Så arbetar du (samma som alltid)
 
 1. **Forka** dagens repo på GitHub (*Fork → Create fork*).
-2. **Klona din fork:** *Code → HTTPS → kopiera adressen*. I terminalen (Ctrl+ö i VS Code): `git clone <adressen>`. Öppna den nya mappen i VS Code och starta *Live Server*.
-3. **Gör uppgiften.** Spara och kontrollera i webbläsaren och Console (F12) efter varje steg. Gör en commit efter varje avslutat steg: `git add .` och `git commit -m "Beskriv vad du gjorde"`.
-4. **Skicka upp** när du är klar: `git push`.
-5. **Lämna in i Microsoft Forms.**
+2. **Klona din fork:** *Code → HTTPS → kopiera adressen*. I terminalen (Ctrl+ö i VS Code): `git clone <adressen>`. Öppna den nya mappen i VS Code.
+3. **Installera verktygen, en gång per repo:** `npm install` i terminalen.
+4. **Starta servern:** `npm run dev`. Öppna adressen den skriver ut (oftast `http://localhost:5173/`). Tryck F12 och välj fliken *Console*. Stoppa med Ctrl+C. Testsidan öppnar du på samma server: `http://localhost:5173/tests.html` (lägg till `/tests.html` efter adressen).
+5. **Gör uppgiften.** Spara och kontrollera i webbläsaren och Console efter varje steg. Gör en commit efter varje avslutat steg: `git add .` och `git commit -m "Beskriv vad du gjorde"`.
+6. **Kontrollera typerna:** `npm run typecheck`. Tyst betyder att alla typer stämmer. Röda understrykningar i VS Code är TypeScript som varnar.
+7. **Skicka upp** när du är klar: `git push`.
+8. **Lämna in i Microsoft Forms.**
 
-Fastnar du: skriv ner exakt var och vad du försökt (och vilket felmeddelande du fick), och ta det först i nästa handledda pass.
+Fastnar du: skriv ner exakt var och vad du försökt (och vilket felmeddelande du fick), och ta det först i nästa handledda pass. Problem med `npm` eller Node? Läs *Elevguide: Node, Vite och TypeScript*.
 
-Filer som använder `import` fungerar bara när sidan öppnas med *Live Server*. Dubbelklickar du på en HTML-fil hamnar du på `file://` och får ett CORS-fel i Console.
+> Vite tar bara bort typerna och kör koden. Den kontrollerar dem inte. Sidan kan alltså köras trots röda understrykningar.
 
 ## Uppgiften steg för steg
 
 ### Steg 1. Klona, öppna och kör testerna
 
-Forka repot, kör `git clone`, öppna mappen i VS Code och starta Live Server på `tests.html` (modulerna kräver Live Server). Alla tester är röda utom några. Testerna är asynkrona, så resultatet kommer efter någon sekund. Öppna `fordrojning.js` och läs den, men ändra den inte.
+Forka repot, kör `git clone`, öppna mappen i VS Code och starta Vite-servern på `tests.html` (modulerna kräver Vite-servern). Alla tester är röda utom några. Testerna är asynkrona, så resultatet kommer efter någon sekund. Öppna `src/fordrojning.ts` och läs den, men ändra den inte.
 
 ### Steg 2. Del 1: skriv om kedjorna i kedjor.js
 
@@ -34,7 +54,7 @@ Fyra funktioner använder `.then()`. Skriv om var och en till en `async function
 
 ### Steg 3. Del 2: hamtaMeny, hamtaRattNamn och hamtaRattEllerNull
 
-Öppna `api.js`. Skriv de tre första funktionerna. Den första väntar på menyn. Den andra låter felet följa med. Den tredje fångar felet med `try/catch` och returnerar `null`. Skillnaden mellan två och tre är dagens viktigaste poäng: vem ska hantera felet?
+Öppna `src/api.ts`. Skriv de tre första funktionerna. Den första väntar på menyn. Den andra låter felet följa med. Den tredje fångar felet med `try/catch` och returnerar `null`. Skillnaden mellan två och tre är dagens viktigaste poäng: vem ska hantera felet?
 
 ### Steg 4. Efter varandra eller samtidigt
 
@@ -50,16 +70,16 @@ Skriv `laddaMeny(hamtaFn, vidTillstand)`. Först `laddar`, sedan antingen `klar`
 
 ### Steg 7. Se det på sidan
 
-Öppna `index.html` med Live Server. Tryck på *Ladda menyn*. Prova rutorna *Simulera fel* och *Simulera tom lista*. Öppna Console och DevTools. Ser du de fyra tillstånden? Du behöver inte ändra `demo.js`.
+Öppna `index.html` med Vite-servern. Tryck på *Ladda menyn*. Prova rutorna *Simulera fel* och *Simulera tom lista*. Öppna Console och DevTools. Ser du de fyra tillstånden? Du behöver inte ändra `src/demo.ts`.
 
 ### Steg 8. Fördjupning (frivillig): allSettled
 
-Skriv `hamtaAllaForsiktigt(idLista)` som hämtar många rätter parallellt med `Promise.allSettled` och returnerar `{ lyckade, misslyckade }`. Skriv egna tester i en ny fil `extra-tests.js`.
+Skriv `hamtaAllaForsiktigt(idLista)` som hämtar många rätter parallellt med `Promise.allSettled` och returnerar `{ lyckade, misslyckade }`. Skriv egna tester i en ny fil `src/extra-tests.ts`.
 
 ## Kontrollista: så vet du att du är klar
 
 - [ ] Alla tester på `tests.html` är gröna.
-- [ ] Alla fyra funktioner i `kedjor.js` är `async` och saknar `.then()`.
+- [ ] Alla fyra funktioner i `src/kedjor.ts` är `async` och saknar `.then()`.
 - [ ] Du kan förklara skillnaden på att fånga ett fel i funktionen och att låta det följa med.
 - [ ] Du kan förklara varför `Promise.all` är snabbare än två `await` i rad.
 - [ ] `index.html` visar alla fyra tillstånden.
@@ -71,7 +91,7 @@ Skriv `hamtaAllaForsiktigt(idLista)` som hämtar många rätter parallellt med `
 - `await` fungerar bara inuti en `async function` (och i moduler på toppnivå). Får du ett syntaxfel, titta på funktionens första rad.
 - Vill du köra två anrop samtidigt: starta båda först, vänta sedan. `await Promise.all([a(), b()])`.
 - `return await` inuti `try` behövs om du vill att `catch` ska fånga felet. Utan `await` slipper felet förbi.
-- Testerna körs i modul-läge och kräver Live Server. Öppnar du filen direkt (`file://`) blockeras modulerna.
+- Testerna körs i modul-läge och kräver Vite-servern. Öppnar du filen direkt (`file://`) blockeras modulerna.
 - Fastnar du: skriv `console.log` före och efter varje `await` och se i vilken ordning det kommer.
 
 ## Inlämning
@@ -81,7 +101,7 @@ Skriv `hamtaAllaForsiktigt(idLista)` som hämtar många rätter parallellt med `
 I formuläret fyller du i:
 
 1. Länk till din fork av det här repot.
-2. Reflektion: Vad är skillnaden mellan att fånga ett fel i funktionen (`hamtaRattEllerNull`) och att låta det följa med (`hamtaRattNamn`)? När är respektive sätt rätt?
+2. Reflektion: Vad är skillnaden mellan att fånga ett fel i funktionen (`hamtaRattEllerNull`) och att låta det följa med (`hamtaRattNamn`)? När är respektive sätt rätt? Vad betyder `Promise<T>`, och varför är `fel` i `catch` av typen `unknown`?
 
 ## Vill du mer? (frivilligt)
 

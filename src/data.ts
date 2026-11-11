@@ -1,7 +1,9 @@
 // Kaféets meny som data. Ändra INTE den här filen.
 // Varje rätt är ett objekt. Hela menyn är en array av objekt.
 
-export const meny = [
+import type { Ratt, Kategori } from "./typer";
+
+export const meny: Ratt[] = [
   { id: 1, namn: "Kardemummabulle", pris: 35, kategori: "bakverk", vegetarisk: true, bild: "images/bulle.svg", beskrivning: "Bakad på färsk kardemumma och pärlsocker." },
   { id: 2, namn: "Bryggkaffe", pris: 32, kategori: "dryck", vegetarisk: true, bild: "images/kaffe.svg", beskrivning: "Lokalrostat, med fri påtår." },
   { id: 3, namn: "Ostmacka", pris: 59, kategori: "lunch", vegetarisk: true, bild: "images/smorgas.svg", beskrivning: "Surdegsbröd, lagrad ost och krispig sallad." },
@@ -12,4 +14,4 @@ export const meny = [
   { id: 8, namn: "Chokladboll", pris: 25, kategori: "bakverk", vegetarisk: true, bild: "images/bulle.svg", beskrivning: "Havre, kakao och kokos." },
 ];
 
-export const kategorier = ["bakverk", "dryck", "lunch"];
+export const kategorier: Kategori[] = ["bakverk", "dryck", "lunch"];

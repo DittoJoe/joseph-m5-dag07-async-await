@@ -1,25 +1,29 @@
 // Tester för dag 7. Ändra inte den här filen.
 // Testerna körs asynkront, så resultatet dyker upp efter någon sekund.
-import { testAsync, assertEqual, assertTrue, visaResultat } from "./testlib.js";
-import { meny } from "./data.js";
-import { vanta, opalitligtAnrop } from "./fordrojning.js";
+import type { Ratt, Tillstand } from "./typer";
+
+import { testAsync, assertEqual, assertTrue, visaResultat } from "./testlib";
+import { meny } from "./data";
+import { vanta, opalitligtAnrop } from "./fordrojning";
 import {
   hamtaRattPris, hamtaRattPrisEllerNoll, hamtaOchFormatera, hamtaTvaPriser,
-} from "./kedjor.js";
+} from "./kedjor";
 import {
   hamtaMeny, hamtaRattNamn, hamtaRattEllerNull, hamtaTvaRatterEfterVarandra,
   hamtaTvaRatterParallellt, hamtaMedForsok, medTimeout, laddaMeny,
-} from "./api.js";
+} from "./api";
 
-async function fangaFel(promise) {
+const ENRATT: Ratt = { id: 1, namn: "Bulle", pris: 35, kategori: "bakverk", vegetarisk: true };
+
+async function fangaFel(promise: Promise<unknown>): Promise<Error | null> {
   try {
     await promise;
   } catch (fel) {
-    return fel;
+    return fel instanceof Error ? fel : new Error(String(fel));
   }
   return null;
 }
-const aeAsync = (fn) => Object.prototype.toString.call(fn) === "[object AsyncFunction]";
+const aeAsync = (fn: unknown) => Object.prototype.toString.call(fn) === "[object AsyncFunction]";
 
 // ---- kedjor.js: omskrivna till async/await ----
 testAsync("kedjor: hamtaRattPris ger priset", async () => {
@@ -62,10 +66,10 @@ testAsync("hamtaRattNamn: ger namnet", async () => {
 testAsync("hamtaRattNamn: okänt id ger ett fel med rätt meddelande", async () => {
   const fel = await fangaFel(hamtaRattNamn(99));
   assertTrue(fel !== null, "förväntade att ett fel skulle kastas");
-  assertEqual(fel.message, "Hittade ingen rätt med id 99");
+  assertEqual(fel?.message, "Hittade ingen rätt med id 99");
 });
 testAsync("hamtaRattEllerNull: ger rätten", async () => {
-  assertEqual((await hamtaRattEllerNull(1)).namn, "Kardemummabulle");
+  assertEqual((await hamtaRattEllerNull(1))?.namn, "Kardemummabulle");
 });
 testAsync("hamtaRattEllerNull: okänt id ger null, inget fel", async () => {
   assertEqual(await hamtaRattEllerNull(99), null);
@@ -96,7 +100,7 @@ testAsync("hamtaMedForsok: lyckas på tredje försöket", async () => {
 testAsync("hamtaMedForsok: ger upp och kastar sista felet", async () => {
   const fel = await fangaFel(hamtaMedForsok(opalitligtAnrop(3), 2));
   assertTrue(fel !== null, "förväntade att ett fel skulle kastas");
-  assertEqual(fel.message, "Misslyckades (försök 2)");
+  assertEqual(fel?.message, "Misslyckades (försök 2)");
 });
 testAsync("hamtaMedForsok: lyckas direkt vid första försöket", async () => {
   assertEqual(await hamtaMedForsok(opalitligtAnrop(1), 3), "Lyckades på försök 1");
@@ -107,25 +111,25 @@ testAsync("medTimeout: snabb promise går igenom", async () => {
 testAsync("medTimeout: långsam promise avvisas", async () => {
   const fel = await fangaFel(medTimeout(vanta(300), 50));
   assertTrue(fel !== null, "förväntade att ett fel skulle kastas");
-  assertEqual(fel.message, "Tidsgränsen överskreds");
+  assertEqual(fel?.message, "Tidsgränsen överskreds");
 });
 testAsync("laddaMeny: laddar, sedan klar", async () => {
-  const steg = [];
-  await laddaMeny(async () => [{ id: 1 }], (t) => steg.push(t.typ));
+  const steg: string[] = [];
+  await laddaMeny(async () => [ENRATT], (t) => steg.push(t.typ));
   assertEqual(steg, ["laddar", "klar"]);
 });
 testAsync("laddaMeny: klar skickar med rätterna", async () => {
-  let senaste;
-  await laddaMeny(async () => [{ id: 1 }], (t) => { senaste = t; });
-  assertEqual(senaste.ratter, [{ id: 1 }]);
+  let senaste = undefined as Tillstand | undefined;
+  await laddaMeny(async () => [ENRATT], (t) => { senaste = t; });
+  assertEqual(senaste?.typ === "klar" ? senaste.ratter : undefined, [ENRATT]);
 });
 testAsync("laddaMeny: tom lista ger tomt", async () => {
-  const steg = [];
+  const steg: string[] = [];
   await laddaMeny(async () => [], (t) => steg.push(t.typ));
   assertEqual(steg, ["laddar", "tomt"]);
 });
 testAsync("laddaMeny: fel ger fel med meddelande", async () => {
-  const steg = [];
+  const steg: Tillstand[] = [];
   await laddaMeny(async () => { throw new Error("Servern svarar inte"); }, (t) => steg.push(t));
   assertEqual(steg, [{ typ: "laddar" }, { typ: "fel", meddelande: "Servern svarar inte" }]);
 });

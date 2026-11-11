@@ -3,24 +3,24 @@
 // en async function med await (och try/catch där det behövs). Beteendet ska bli exakt
 // detsamma, så testerna ska fortsätta vara gröna. Testerna kontrollerar också att
 // funktionerna är async.
-import { hamtaRattFranServer } from "./fordrojning.js";
-import { formateraPris } from "./pris.js";
+import { hamtaRattFranServer } from "./fordrojning";
+import { formateraPris } from "./pris";
 
-export function hamtaRattPris(id) {
+export function hamtaRattPris(id: number): Promise<number> {
   return hamtaRattFranServer(id, 10).then((ratt) => ratt.pris);
 }
 
-export function hamtaRattPrisEllerNoll(id) {
+export function hamtaRattPrisEllerNoll(id: number): Promise<number> {
   return hamtaRattFranServer(id, 10)
     .then((ratt) => ratt.pris)
     .catch(() => 0);
 }
 
-export function hamtaOchFormatera(id) {
+export function hamtaOchFormatera(id: number): Promise<string> {
   return hamtaRattFranServer(id, 10).then((ratt) => `${ratt.namn}: ${formateraPris(ratt.pris)}`);
 }
 
-export function hamtaTvaPriser(id1, id2) {
+export function hamtaTvaPriser(id1: number, id2: number): Promise<number> {
   return hamtaRattFranServer(id1, 10).then((ratt1) =>
     hamtaRattFranServer(id2, 10).then((ratt2) => ratt1.pris + ratt2.pris)
   );
