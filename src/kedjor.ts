@@ -6,21 +6,43 @@
 import { hamtaRattFranServer } from "./fordrojning";
 import { formateraPris } from "./pris";
 
-export function hamtaRattPris(id: number): Promise<number> {
+// export function hamtaRattPris(id: number): Promise<number> {
+//   return hamtaRattFranServer(id, 10).then((ratt) => ratt.pris);
+// }
+
+export async function hamtaRattPris(id: number) {
   return hamtaRattFranServer(id, 10).then((ratt) => ratt.pris);
 }
 
-export function hamtaRattPrisEllerNoll(id: number): Promise<number> {
-  return hamtaRattFranServer(id, 10)
-    .then((ratt) => ratt.pris)
-    .catch(() => 0);
+// export function hamtaRattPrisEllerNoll(id: number): Promise<number> {
+//   return hamtaRattFranServer(id, 10)
+//     .then((ratt) => ratt.pris)
+//     .catch(() => 0);
+// }
+
+export async function hamtaRattPrisEllerNoll(id: number) {
+  try {
+    return hamtaRattFranServer(id, 10).then((ratt) => ratt.pris);
+  } catch {
+    return 0;
+  }
 }
 
-export function hamtaOchFormatera(id: number): Promise<string> {
+// export function hamtaOchFormatera(id: number): Promise<string> {
+//   return hamtaRattFranServer(id, 10).then((ratt) => `${ratt.namn}: ${formateraPris(ratt.pris)}`);
+// }
+
+export async function hamtaOchFormatera(id: number) {
   return hamtaRattFranServer(id, 10).then((ratt) => `${ratt.namn}: ${formateraPris(ratt.pris)}`);
 }
 
-export function hamtaTvaPriser(id1: number, id2: number): Promise<number> {
+// export function hamtaTvaPriser(id1: number, id2: number): Promise<number> {
+//   return hamtaRattFranServer(id1, 10).then((ratt1) =>
+//     hamtaRattFranServer(id2, 10).then((ratt2) => ratt1.pris + ratt2.pris)
+//   );
+// }
+
+export async function hamtaTvaPriser(id1: number, id2: number) {
   return hamtaRattFranServer(id1, 10).then((ratt1) =>
     hamtaRattFranServer(id2, 10).then((ratt2) => ratt1.pris + ratt2.pris)
   );
