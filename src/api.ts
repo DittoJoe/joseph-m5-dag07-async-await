@@ -5,12 +5,12 @@ import type { Ratt, Tillstand } from "./typer";
 
 // 1. Hämta hela menyn (använd hamtaMenyFranServer med 10 ms). Returnerar menyn.
 export async function hamtaMeny(): Promise<Ratt[]> {
-  return hamtaMenyFranServer(10);
+  return await hamtaMenyFranServer(10);
 }
 
 // 2. Hämta namnet på en rätt (hamtaRattFranServer(id, 10)). Okänt id: låt felet följa med (fånga det inte).
 export async function hamtaRattNamn(id: number): Promise<string> {
-  return hamtaRattFranServer(id, 10).then((ratt) => ratt.namn);
+  return await hamtaRattFranServer(id, 10).then((ratt) => ratt.namn);
 }
 
 // 3. Som 2, men om något går fel returnerar funktionen null istället för att kasta fel (try/catch).
@@ -31,7 +31,10 @@ export async function hamtaTvaRatterEfterVarandra(id1: number, id2: number, ms: 
 
 // 5. Samma sak, men båda ANROPEN startas samtidigt (Promise.all). Ska gå dubbelt så snabbt.
 export async function hamtaTvaRatterParallellt(id1: number, id2: number, ms: number = 100): Promise<Ratt[]> {
-  // TODO
+  return await Promise.all([
+    hamtaRattFranServer(id1, ms),
+    hamtaRattFranServer(id2, ms),
+  ]);
 }
 
 // 6. Försök upp till maxForsok gånger. anropFn är en funktion som returnerar en promise.
