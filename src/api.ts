@@ -5,22 +5,28 @@ import type { Ratt, Tillstand } from "./typer";
 
 // 1. Hämta hela menyn (använd hamtaMenyFranServer med 10 ms). Returnerar menyn.
 export async function hamtaMeny(): Promise<Ratt[]> {
-  // TODO
+  return hamtaMenyFranServer(10);
 }
 
 // 2. Hämta namnet på en rätt (hamtaRattFranServer(id, 10)). Okänt id: låt felet följa med (fånga det inte).
 export async function hamtaRattNamn(id: number): Promise<string> {
-  // TODO
+  return hamtaRattFranServer(id, 10).then((ratt) => ratt.namn);
 }
 
 // 3. Som 2, men om något går fel returnerar funktionen null istället för att kasta fel (try/catch).
 export async function hamtaRattEllerNull(id: number): Promise<Ratt | null> {
-  // TODO
+  try {
+    return await hamtaRattFranServer(id, 10);
+  } catch {
+    return null;
+  }
 }
 
 // 4. Hämta två rätter EFTER varandra (await, sedan await). Returnerar [ratt1, ratt2]. ms är väntetiden per anrop.
 export async function hamtaTvaRatterEfterVarandra(id1: number, id2: number, ms: number = 100): Promise<Ratt[]> {
-  // TODO
+  const ratt1 = await hamtaRattFranServer(id1, ms);
+  const ratt2 = await hamtaRattFranServer(id2, ms);
+  return [ratt1, ratt2];
 }
 
 // 5. Samma sak, men båda ANROPEN startas samtidigt (Promise.all). Ska gå dubbelt så snabbt.
