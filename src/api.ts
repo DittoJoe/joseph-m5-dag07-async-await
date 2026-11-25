@@ -41,7 +41,15 @@ export async function hamtaTvaRatterParallellt(id1: number, id2: number, ms: num
 //    Lyckas något försök: returnera resultatet. Misslyckas alla: kasta det SISTA felet.
 //    Tips: en for-loop med try/catch inuti, och spara det senaste felet i en variabel.
 export async function hamtaMedForsok<T>(anropFn: () => Promise<T>, maxForsok: number): Promise<T> {
-  // TODO
+  let senasteFel = 0
+  for (let i = 1; i < maxForsok + 1; i++) {
+    try {
+      return await anropFn();
+    } catch (fel) {
+      senasteFel = fel;
+    }
+  }
+  throw senasteFel
 }
 
 // 7. Ge en promise en tidsgräns. Är den inte klar inom ms millisekunder: avvisa med
