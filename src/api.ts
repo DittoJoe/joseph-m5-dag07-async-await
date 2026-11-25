@@ -55,7 +55,13 @@ export async function hamtaMedForsok<T>(anropFn: () => Promise<T>, maxForsok: nu
 // 7. Ge en promise en tidsgräns. Är den inte klar inom ms millisekunder: avvisa med
 //    new Error("Tidsgränsen överskreds"). Tips: Promise.race med en promise som avvisas efter ms.
 export function medTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
-  // TODO
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    setTimeout(() => {
+      reject(new Error("Tidsgränsen överskreds"));
+    }, ms);
+  });
+
+  return Promise.race([promise, timeoutPromise]);
 }
 
 // 8. Tillståndsmaskinen för att ladda något: laddar -> klar / tomt / fel.
@@ -65,5 +71,18 @@ export function medTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
 //      { typ: "tomt" }                         om listan är tom
 //      { typ: "fel", meddelande: "..." }       om hamtaFn misslyckas (felets message)
 export async function laddaMeny(hamtaFn: () => Promise<Ratt[]>, vidTillstand: (tillstand: Tillstand) => void): Promise<void> {
-  // TODO
+  vidTillstand({ typ: "laddar" });
+
+  try {
+    const ratter = await hamtaFn();
+
+    if (ratter.length === 0) {
+      vidTillstand({ typ: "tomt" });
+    } else {
+      vidTillstand({ typ: "klar", ratter });
+    }
+  } catch (fel) {
+    const meddelande = fel instanceof Error ? fel.message : String(fel);
+    vidTillstand({ typ: "fel", meddelande });
+  }
 }
